@@ -1,7 +1,7 @@
 package org.ygl.fastnoise
 
 
-private val gradient3D: Array<Float3> = arrayOf(
+val gradient3D = arrayOf(
         Float3(1f, 1f, 1f), Float3(-1f, 1f, 1f), Float3(1f, -1f, 1f), Float3(-1f, -1f, 1f),
         Float3(1f, 1f, 1f), Float3(-1f, 1f, 1f), Float3(1f, 1f, -1f), Float3(-1f, 1f, -1f),
         Float3(1f, 1f, 1f), Float3(1f, -1f, 1f), Float3(1f, 1f, -1f), Float3(1f, -1f, -1f),
