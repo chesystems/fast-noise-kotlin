@@ -6,3 +6,9 @@ data class Vector3(
         var y: Double,
         var z: Double
 )
+
+data class Vector3f(
+        var x: Float,
+        var y: Float,
+        var z: Float
+)

@@ -1,10 +1,10 @@
 package org.ygl.fastnoise
 
 
-private const val X_PRIME = 1619
-private const val Y_PRIME = 31337
-private const val Z_PRIME = 6971
-private const val W_PRIME = 1013
+const val X_PRIME = 1619
+const val Y_PRIME = 31337
+const val Z_PRIME = 6971
+const val W_PRIME = 1013
 
 fun hash2D(seed: Int, x: Int, y: Int): Int {
     var hash = seed
@@ -113,7 +113,7 @@ fun gradCoord4D(seed: Int, x: Int, y: Int, z: Int, w: Int, xd: Float, yd: Float,
     return (if (hash and 4 == 0) -a else a) + (if (hash and 2 == 0) -b else b) + if (hash and 1 == 0) -c else c
 }
 
-fun GradCoord4D(seed: Int, x: Int, y: Int, z: Int, w: Int, xd: Double, yd: Double, zd: Double, wd: Double): Double {
+fun gradCoord4D(seed: Int, x: Int, y: Int, z: Int, w: Int, xd: Double, yd: Double, zd: Double, wd: Double): Double {
     var hash = seed
     hash = hash xor X_PRIME * x
     hash = hash xor Y_PRIME * y
