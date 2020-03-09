@@ -81,6 +81,17 @@ fun gradCoord3D(seed: Int, x: Int, y: Int, z: Int, xd: Float, yd: Float, zd: Flo
     return xd * g.x + yd * g.y + zd * g.z
 }
 
+fun gradCoord3D(seed: Int, x: Int, y: Int, z: Int, xd: Double, yd: Double, zd: Double): Double {
+    var hash = seed
+    hash = hash xor X_PRIME * x
+    hash = hash xor Y_PRIME * y
+    hash = hash xor Z_PRIME * z
+    hash *= hash * hash * 60493
+    hash = hash shr 13 xor hash
+    val g: Float3 = gradient3D[hash and 15]
+    return xd * g.x + yd * g.y + zd * g.z
+}
+
 fun gradCoord4D(seed: Int, x: Int, y: Int, z: Int, w: Int, xd: Float, yd: Float, zd: Float, wd: Float): Float {
     var hash = seed
     hash = hash xor X_PRIME * x

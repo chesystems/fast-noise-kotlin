@@ -6,8 +6,8 @@ fun fastFloor(f: Float): Int {
     return if (f >= 0) f.toInt() else f.toInt() - 1
 }
 
-fun fastFloor(f: Double): Int {
-    return if (f >= 0) f.toInt() else f.toInt() - 1
+fun fastFloor(d: Double): Int {
+    return if (d >= 0) d.toInt() else d.toInt() - 1
 }
 
 fun fastRound(f: Float): Int {

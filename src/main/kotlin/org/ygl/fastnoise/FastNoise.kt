@@ -661,12 +661,16 @@ class FastNoise(
         return singleSimplex(seed, x * frequency, y * frequency, z * frequency)
     }
 
+    fun getSimplex(x: Double, y: Double, z: Double): Double {
+        return singleSimplex(seed, x * frequency, y * frequency, z * frequency)
+    }
+
     private fun singleSimplex(seed: Int, x: Float, y: Float, z: Float): Float {
-        var t = (x + y + z) * F3
+        var t = (x + y + z) * F3F
         val i = fastFloor(x + t)
         val j = fastFloor(y + t)
         val k = fastFloor(z + t)
-        t = (i + j + k) * G3
+        t = (i + j + k) * G3F
         val x0 = x - (i - t)
         val y0 = y - (j - t)
         val z0 = z - (k - t)
@@ -726,15 +730,15 @@ class FastNoise(
                 k2 = 0
             }
         }
-        val x1 = x0 - i1 + G3
-        val y1 = y0 - j1 + G3
-        val z1 = z0 - k1 + G3
-        val x2 = x0 - i2 + F3
-        val y2 = y0 - j2 + F3
-        val z2 = z0 - k2 + F3
-        val x3 = x0 + G33
-        val y3 = y0 + G33
-        val z3 = z0 + G33
+        val x1 = x0 - i1 + G3F
+        val y1 = y0 - j1 + G3F
+        val z1 = z0 - k1 + G3F
+        val x2 = x0 - i2 + F3F
+        val y2 = y0 - j2 + F3F
+        val z2 = z0 - k2 + F3F
+        val x3 = x0 + G33F
+        val y3 = y0 + G33F
+        val z3 = z0 + G33F
         val n0: Float
         val n1: Float
         val n2: Float
@@ -756,6 +760,105 @@ class FastNoise(
         }
         t = 0.6f - x3 * x3 - y3 * y3 - z3 * z3
         if (t < 0) n3 = 0f else {
+            t *= t
+            n3 = t * t * gradCoord3D(seed, i + 1, j + 1, k + 1, x3, y3, z3)
+        }
+        return 32 * (n0 + n1 + n2 + n3)
+    }
+
+    private fun singleSimplex(seed: Int, x: Double, y: Double, z: Double): Double {
+        var t = (x + y + z) * F3D
+        val i = fastFloor(x + t)
+        val j = fastFloor(y + t)
+        val k = fastFloor(z + t)
+        t = (i + j + k) * G3D
+        val x0 = x - (i - t)
+        val y0 = y - (j - t)
+        val z0 = z - (k - t)
+        val i1: Int
+        val j1: Int
+        val k1: Int
+        val i2: Int
+        val j2: Int
+        val k2: Int
+        if (x0 >= y0) {
+            if (y0 >= z0) {
+                i1 = 1
+                j1 = 0
+                k1 = 0
+                i2 = 1
+                j2 = 1
+                k2 = 0
+            } else if (x0 >= z0) {
+                i1 = 1
+                j1 = 0
+                k1 = 0
+                i2 = 1
+                j2 = 0
+                k2 = 1
+            } else {
+                i1 = 0
+                j1 = 0
+                k1 = 1
+                i2 = 1
+                j2 = 0
+                k2 = 1
+            }
+        } else {
+            if (y0 < z0) {
+                i1 = 0
+                j1 = 0
+                k1 = 1
+                i2 = 0
+                j2 = 1
+                k2 = 1
+            } else if (x0 < z0) {
+                i1 = 0
+                j1 = 1
+                k1 = 0
+                i2 = 0
+                j2 = 1
+                k2 = 1
+            } else  // x0 >= z0
+            {
+                i1 = 0
+                j1 = 1
+                k1 = 0
+                i2 = 1
+                j2 = 1
+                k2 = 0
+            }
+        }
+        val x1 = x0 - i1 + G3D
+        val y1 = y0 - j1 + G3D
+        val z1 = z0 - k1 + G3D
+        val x2 = x0 - i2 + F3D
+        val y2 = y0 - j2 + F3D
+        val z2 = z0 - k2 + F3D
+        val x3 = x0 + G33D
+        val y3 = y0 + G33D
+        val z3 = z0 + G33D
+        val n0: Double
+        val n1: Double
+        val n2: Double
+        val n3: Double
+        t = 0.6 - x0 * x0 - y0 * y0 - z0 * z0
+        if (t < 0) n0 = 0.0 else {
+            t *= t
+            n0 = t * t * gradCoord3D(seed, i, j, k, x0, y0, z0)
+        }
+        t = 0.6 - x1 * x1 - y1 * y1 - z1 * z1
+        if (t < 0) n1 = 0.0 else {
+            t *= t
+            n1 = t * t * gradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1)
+        }
+        t = 0.6 - x2 * x2 - y2 * y2 - z2 * z2
+        if (t < 0) n2 = 0.0 else {
+            t *= t
+            n2 = t * t * gradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2)
+        }
+        t = 0.6 - x3 * x3 - y3 * y3 - z3 * z3
+        if (t < 0) n3 = 0.0 else {
             t *= t
             n3 = t * t * gradCoord3D(seed, i + 1, j + 1, k + 1, x3, y3, z3)
         }
@@ -1621,9 +1724,12 @@ class FastNoise(
         // Returns a 0 float/double
         fun GetDecimalType() = 0f
 
-        private const val F3 = 1.0f / 3.0f
-        private const val G3 = 1.0f / 6.0f
-        private const val G33 = G3 * 3 - 1
+        private const val F3D = 1.0 / 3.0
+        private const val F3F = F3D.toFloat()
+        private const val G3D = 1.0 / 6.0
+        private const val G3F = G3D.toFloat()
+        private const val G33D = G3D * 3 - 1
+        private const val G33F = G3F * 3 - 1
         private const val F2 = 1.0f / 2.0f
         private const val G2 = 1.0f / 4.0f
         private val SIMPLEX_4D = byteArrayOf(
