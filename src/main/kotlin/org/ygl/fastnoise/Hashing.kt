@@ -70,6 +70,16 @@ fun gradCoord2D(seed: Int, x: Int, y: Int, xd: Float, yd: Float): Float {
     return xd * g.x + yd * g.y
 }
 
+fun gradCoord2D(seed: Int, x: Int, y: Int, xd: Double, yd: Double): Double {
+    var hash = seed
+    hash = hash xor X_PRIME * x
+    hash = hash xor Y_PRIME * y
+    hash *= hash * hash * 60493
+    hash = hash shr 13 xor hash
+    val g = gradient2D[hash and 7]
+    return xd * g.x + yd * g.y
+}
+
 fun gradCoord3D(seed: Int, x: Int, y: Int, z: Int, xd: Float, yd: Float, zd: Float): Float {
     var hash = seed
     hash = hash xor X_PRIME * x

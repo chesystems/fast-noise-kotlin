@@ -924,11 +924,15 @@ class FastNoise(
         return singleSimplex(seed, x * frequency, y * frequency)
     }
 
+    fun getSimplex(x: Double, y: Double): Double {
+        return singleSimplex(seed, x * frequency, y * frequency)
+    }
+
     private fun singleSimplex(seed: Int, x: Float, y: Float): Float {
-        var t = (x + y) * F2
+        var t = (x + y) * F2F
         val i = fastFloor(x + t)
         val j = fastFloor(y + t)
-        t = (i + j) * G2
+        t = (i + j) * G2F
         val X0 = i - t
         val Y0 = j - t
         val x0 = x - X0
@@ -942,10 +946,10 @@ class FastNoise(
             i1 = 0
             j1 = 1
         }
-        val x1 = x0 - i1 + G2
-        val y1 = y0 - j1 + G2
-        val x2 = x0 - 1 + F2
-        val y2 = y0 - 1 + F2
+        val x1 = x0 - i1 + G2F
+        val y1 = y0 - j1 + G2F
+        val x2 = x0 - 1 + F2F
+        val y2 = y0 - 1 + F2F
         val n0: Float
         val n1: Float
         val n2: Float
@@ -961,6 +965,49 @@ class FastNoise(
         }
         t = 0.5.toFloat() - x2 * x2 - y2 * y2
         if (t < 0) n2 = 0f else {
+            t *= t
+            n2 = t * t * gradCoord2D(seed, i + 1, j + 1, x2, y2)
+        }
+        return 50 * (n0 + n1 + n2)
+    }
+
+    private fun singleSimplex(seed: Int, x: Double, y: Double): Double {
+        var t = (x + y) * F2D
+        val i = fastFloor(x + t)
+        val j = fastFloor(y + t)
+        t = (i + j) * G2D
+        val X0 = i - t
+        val Y0 = j - t
+        val x0 = x - X0
+        val y0 = y - Y0
+        val i1: Int
+        val j1: Int
+        if (x0 > y0) {
+            i1 = 1
+            j1 = 0
+        } else {
+            i1 = 0
+            j1 = 1
+        }
+        val x1 = x0 - i1 + G2D
+        val y1 = y0 - j1 + G2D
+        val x2 = x0 - 1 + F2D
+        val y2 = y0 - 1 + F2D
+        val n0: Double
+        val n1: Double
+        val n2: Double
+        t = 0.5 - x0 * x0 - y0 * y0
+        if (t < 0) n0 = 0.0 else {
+            t *= t
+            n0 = t * t * gradCoord2D(seed, i, j, x0, y0)
+        }
+        t = 0.5 - x1 * x1 - y1 * y1
+        if (t < 0) n1 = 0.0 else {
+            t *= t
+            n1 = t * t * gradCoord2D(seed, i + i1, j + j1, x1, y1)
+        }
+        t = 0.5 - x2 * x2 - y2 * y2
+        if (t < 0) n2 = 0.0 else {
             t *= t
             n2 = t * t * gradCoord2D(seed, i + 1, j + 1, x2, y2)
         }
@@ -1669,11 +1716,11 @@ class FastNoise(
         v3.z += lerp(lz0y, lerp(lz0x, lz1x, ys), zs) * perturbAmp
     }
 
-    fun gradientPerturb(v2: Vector2f) {
+    fun gradientPerturb(v2: Vec2f) {
         singleGradientPerturb(seed, gradientPerturbAmp, frequency, v2)
     }
 
-    fun gradientPerturbFractal(v2: Vector2f) {
+    fun gradientPerturbFractal(v2: Vec2f) {
         var seed = seed
         var amp = gradientPerturbAmp * fractalBounding
         var freq = frequency
@@ -1685,7 +1732,7 @@ class FastNoise(
         }
     }
 
-    private fun singleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v2: Vector2f) {
+    private fun singleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v2: Vec2f) {
         val xf = v2.x * frequency
         val yf = v2.y * frequency
         val x0 = fastFloor(xf)
@@ -1730,8 +1777,10 @@ class FastNoise(
         private const val G3F = G3D.toFloat()
         private const val G33D = G3D * 3 - 1
         private const val G33F = G3F * 3 - 1
-        private const val F2 = 1.0f / 2.0f
-        private const val G2 = 1.0f / 4.0f
+        private const val F2D = 1.0 / 2.0
+        private const val F2F = F2D.toFloat()
+        private const val G2D = 1.0 / 4.0
+        private const val G2F = G2D.toFloat()
         private val SIMPLEX_4D = byteArrayOf(
                 0, 1, 2, 3, 0, 1, 3, 2, 0, 0, 0, 0, 0, 2, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0,
                 0, 2, 1, 3, 0, 0, 0, 0, 0, 3, 1, 2, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 0,
