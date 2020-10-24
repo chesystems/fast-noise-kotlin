@@ -1642,11 +1642,11 @@ class FastNoise(
         }
     }
 
-    fun gradientPerturb(v3: Vector3f) {
+    fun gradientPerturb(v3: Vec3f) {
         singleGradientPerturb(seed, gradientPerturbAmp, frequency, v3)
     }
 
-    fun gradientPerturbFractal(v3: Vector3f) {
+    fun gradientPerturbFractal(v3: Vec3f) {
         var seed = seed
         var amp = gradientPerturbAmp * fractalBounding
         var freq = frequency
@@ -1658,7 +1658,7 @@ class FastNoise(
         }
     }
 
-    private fun singleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v3: Vector3f) {
+    private fun singleGradientPerturb(seed: Int, perturbAmp: Float, frequency: Float, v3: Vec3f) {
         val xf: Float = v3.x * frequency
         val yf: Float = v3.y * frequency
         val zf: Float = v3.z * frequency
